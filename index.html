@@ -3,49 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Our Application</title>
+    <title>Google Login</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+            text-align: center;
             background-color: #f4f4f4;
+            padding: 20px;
         }
-        header {
-            background-color: #4CAF50;
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 400px;
+            margin: auto;
+        }
+        #profile {
+            margin-top: 20px;
+            display: none;
+        }
+        img {
+            border-radius: 50%;
+        }
+        button {
+            background: #4285F4;
             color: white;
-            text-align: center;
-            padding: 10px 0;
-        }
-        main {
-            margin: 20px;
-        }
-        footer {
-            text-align: center;
             padding: 10px;
-            background-color: #333;
-            color: white;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
         }
-        .privacy-link {
-            color: #4CAF50;
-            text-decoration: none;
-        }
-        .privacy-link:hover {
-            text-decoration: underline;
+        button:hover {
+            background: #357ae8;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Welcome to Our Application</h1>
-    </header>
 
-    <main>
-        <p>Thank you for visiting our app. We offer a variety of services to help you stay connected and productive. Please make sure to review our <a href="privacy-policy.html" class="privacy-link">Privacy Policy</a> to understand how we handle your data.</p>
-    </main>
+    <div class="container">
+        <h2>Google Login</h2>
+        <div id="g_id_onload"
+            data-client_id="358687045836-6dt4l609jraapued19ckltko095c5tvt.apps.googleusercontent.com"
+            data-context="signin"
+            data-ux_mode="popup"
+            data-callback="handleCredentialResponse"
+            data-auto_prompt="false">
+        </div>
+        <div class="g_id_signin" data-type="standard"></div>
 
-    <footer>
-        <p>&copy; 2025 Our Application. All Rights Reserved.</p>
-    </footer>
+        <div id="profile">
+            <h3>Welcome, <span id="userName"></span>!</h3>
+            <img id="userImage" src="" width="100" height="100">
+            <p>Email: <span id="userEmail"></span></p>
+            <button onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <script>
+        function handleCredentialResponse(response) {
+            console.log("Google Credential Response:", response);
+            
+            // Decode the JWT token to get user details
+            const data = JSON.parse(atob(response.credential.split('.')[1]));
+            
+            document.getElementById("userName").innerText = data.name;
+            document.getElementById("userEmail").innerText = data.email;
+            document.getElementById("userImage").src = data.picture;
+            document.getElementById("profile").style.display = "block";
+        }
+
+        function logout() {
+            google.accounts.id.disableAutoSelect();
+            document.getElementById("profile").style.display = "none";
+        }
+    </script>
+
 </body>
 </html>
